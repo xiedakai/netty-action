@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<meta charset="UTF-8">
+	WebSocket
+</head>
+<body>
+<br>
+<script type="text/javascript">
+	var socket;
+	if(!window.WebSocket){
+		window.WebSocket = window.MozWebSocket;
+	}
+	if(window.WebSocket){
+		socket = new WebSocket("ws://localhost:7394/websocket");
+		socket.onmessage = function(event){
+			var ta = document.getElementById('responseText');
+			ta.value = ta.value +'\n'+event.data;
+		}
+		socket.onopen = function(event){
+			var ta = document.getElementById('responseText');
+			ta.value = "打开WebSocket服务正常";
+		}
+		socket.onclose = function(event){
+			var ta = document.getElementById('responseText');
+			ta.value = "WebSocket关闭";
+		}
+	}else{
+		alert("你的浏览器不支持WebSocket")
+	}
+
+	function send(msg){
+		if(!window.WebSocket){
+			return;
+		}
+		if(socket.readyState == WebSocket.OPEN){
+			socket.send(msg);
+		}else{
+			alert("WebSocket连接建立失败");
+		}
+	}
+</script>
+<form onsubmit="return false;">
+	<input type="text" name="message" value="Netty最佳实践" />
+	<br><br>
+	<input type="button" value="发送请求消息"  onclick="send(this.form.message.value)" />
+	<hr color="blue"/>
+	<h3>服务端返回的应答消息</h3>
+	<textarea id="responseText" style="width:500px;height:300px;"></textarea>
+</form>
+</body>
+</html>
